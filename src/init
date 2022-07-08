@@ -1,5 +1,5 @@
 CORES 4
-0 hang.elf
-1 hang.elf
-2 hang.elf
-3 hang.elf
+0 HANG
+1 HANG
+2 HANG
+3 HANG
