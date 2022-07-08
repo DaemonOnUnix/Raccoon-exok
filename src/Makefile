@@ -23,7 +23,6 @@ BUILD = build
 
 RAMDISK = kernel/userspace/build
 
-ISO_FILES_TEST = test_elf/build/hang.elf
 ISO_FILES = $(KERNEL).elf limine.cfg limine/limine.sys limine/limine-cd.bin limine/limine-eltorito-efi.bin $(RAMDISK) init capabilities $(ISO_FILES_TEST)
 
 CORE_NUM = 4
