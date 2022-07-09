@@ -3,6 +3,8 @@
 #include "log/log.h"
 #include "interrupts/stackframe.h"
 #include "UEFI/APIC.h"
+#include "cpu_regs_interface.h"
+
 #define nIDT_ENTRY 256
 
 #ifndef IDT_DEBUG
@@ -43,6 +45,7 @@ idt_entry create_idt_entry(uintptr_t handler, uint8_t ist, uint8_t idt_flags) {
     };
 }
 
+__attribute__((aligned(0x1000)))
 static idt_t idt = {};
 static idt_descriptor_t idt_descriptor = {
     .size = sizeof(idt_entry) * nIDT_ENTRY,
@@ -161,6 +164,8 @@ void setup_idt(void) {
 
     load_idt(&idt_descriptor);
 
+    PANIC_IF(struct_cpu_regs_interface_set("idtr", &idt_descriptor, 0) == 0, "Failed to set IDT descriptor in cache.");
+
     LOG_OK("IDT loaded, IDT descriptor at {x}, IDT at {x} of size {d}", &idt_descriptor, idt_descriptor.offset, idt_descriptor.size);
 }
 
@@ -210,15 +215,11 @@ void isr_handler(volatile stackframe regs) {
         while(1) asm volatile("hlt");
     }
 }
+
 void irq_handler(volatile stackframe regs) {
-    
-    // LOG_INFO("ISR handler called...");
-    // log_stackframe(&regs);
-    // LOG_INFO("Interrupt number : {d}.", regs.int_no);
     void(*cur_isr)(volatile stackframe*) = isr[regs.int_no];
 
     LOG_INFO("Interrupt number {d}, ISR to call at : {x}", regs.int_no, cur_isr);
-
 
 	if (cur_isr != 0){
 		cur_isr(&regs);

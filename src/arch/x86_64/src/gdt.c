@@ -53,6 +53,7 @@ gdt_entry create_gdt_entry(uint32_t base, uint32_t limit, uint8_t granularity, u
 
 #define quick_entry(flags, granularity) (create_gdt_entry(0, 0, granularity, flags))
 
+__attribute__((aligned(0x1000)))
 static gdt_t gdt;
 static gdt_descriptor gdt_d;
 /*
@@ -99,6 +100,8 @@ void setup_gdt(){
 	gdt_d.offset = (uint64_t)(&gdt);
 	gdt_d.size = sizeof(gdt_t) -1;
 	LOG_INFO("GDT Descriptor created, at {x}. GDT at {x} with size {d}.", (uint64_t)(&gdt_d), gdt_d.offset, gdt_d.size);
+
+    PANIC_IF(struct_cpu_regs_interface_set("gdtr", (uint64_t)&gdt_d, 0) == 0, "Failed to set GDT descriptor in cache.");
 
 	extern void load_gdt(gdt_descriptor* desc);
 	load_gdt(&gdt_d);

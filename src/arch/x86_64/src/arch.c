@@ -14,7 +14,6 @@
 #include "UEFI/RSDT.h"
 #include "SMP/SMP.h"
 #include "UEFI/APIC.h"
-#include "tasking/tasking.h"
 #include "interrupts/defined_interrupts.h"
 #include "interface_struct/interface_struct.h"
 #include "syscall-enabling/syscall.h"
@@ -44,6 +43,7 @@ mapping_t get_current_mapping(){
 
 static interface_struct interface = {0};
 
+void enable_sse(void);
 interface_struct *bootstrap_arch(void* structure){
 
     struct stivale2_struct* stivale2_struct = (struct stivale2_struct*)structure;
@@ -70,9 +70,7 @@ interface_struct *bootstrap_arch(void* structure){
     for(size_t i = 0; i < modules_tag->module_count; i++){
         struct stivale2_module* module = modules_tag->modules + i;
         LOG_INFO("Module {d} : {s}", i, module->string);
-        // for(volatile size_t i = 0; i < 0x20; i++)
-        //     LOG_OK("{x}", *(uint8_t*)(module->begin + i));
-        // PANIC("");
+
         register_new_file(physical_to_stivale(module->string), (uintptr_t)physical_to_stivale(module->begin), (uintptr_t)physical_to_stivale(module->end));
     }
 
@@ -97,25 +95,28 @@ interface_struct *bootstrap_arch(void* structure){
     
     init_pmm((uintptr_t)physical_to_stivale(first_frame));
     init_vmm();
-    LOG_ERR("plouf");
 
     asm volatile("mov cr3, %0"::"a"(create_page_directory()));
     LOG_OK("Page directory created and loaded successfully.");
 
     setup_context_frame();
     
-    extern void enable_sse(void);
     enable_sse();
     
-
     parse_RSDT();
     enable_APIC();
     init_APIC_interrupt(); // I don't know why it is working, but it is working.
     init_APIC_timer(); 
 
-    asm volatile("sti");
+    // asm volatile("sti");
 
     syscall_initialize();
+
+    uint64_t cr4;
+    asm volatile("mov %0, cr4" : "=a"(cr4) :);
+    cr4 |= 0x800;
+    asm volatile("mov cr4, %0" :: "a"(cr4));
+    LOG_OK("Set CR4.UMIP to 1.");
 
     launch_APs(smp_infos, interface.launching_addresses);
 

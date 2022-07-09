@@ -5,7 +5,6 @@
 static struct file initrd_files[MAX_FILES_IN_INITRD];
 static size_t file_count = 0;
 
-//my_strncpy
 static void my_strncpy(volatile char *dest, volatile const char *src, size_t n)
 {
     size_t i;
@@ -33,10 +32,12 @@ static char my_strcmp(char* a, char* b)
             return 1;
     return *a != *b;
 }
+
 struct file *get_files()
 {
     return initrd_files;
 }
+
 struct file *get_file(char *name)
 {
     for (size_t i = 0; i < file_count; i++)

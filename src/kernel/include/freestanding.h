@@ -1,11 +1,6 @@
 #ifndef kFREESTANDING_H
 #define kFREESTANDING_H
 
-// #pragma GCC diagnostic ignored "-Wint-conversion"
-// #pragma GCC diagnostic ignored "-Wdiscarded-qualifiers"
-// #pragma GCC diagnostic ignored "-Wunused-function"
-// #pragma GCC diagnostic ignored "-Wunused-parameter"
-// #pragma GCC diagnostic ignored "-Wunused-variable"
 #include <float.h>
 #include <iso646.h>
 #include <limits.h>

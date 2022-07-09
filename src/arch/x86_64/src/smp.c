@@ -17,25 +17,11 @@
 #include "UEFI/APIC.h"
 #include "syscall-enabling/syscall.h"
 
-
-// static uint8_t value = 0;
 static bool smp_status = 0;
 static uint8_t booted_cpus_count = 1;
 
 uint8_t get_booted_cpus_count(){
     return booted_cpus_count;
-}
-
-uint32_t get_core_id_(uint32_t* lapic_id){
-    static uint32_t id = 0;
-    
-    ONCE (id);
-
-    LOG_PANIC("PLOUFFFFF");
-    
-    id = *lapic_id;
-
-    return id;
 }
 
 uint32_t id = 0;
@@ -86,6 +72,12 @@ void _start_core(struct stivale2_smp_info* smp_info){
     smp_status = 1;
     smp_info = physical_to_stivale(smp_info);
     
+    uint64_t cr4;
+    asm volatile("mov %0, cr4" : "=a"(cr4) :);
+    cr4 |= 0x800;
+    asm volatile("mov cr4, %0" :: "a"(cr4));
+    LOG_OK("Set CR4.UMIP to 1.");
+
     booted_cpus_count++;
     
     LOG_OK("Halting CPU {d}. Initialization successful.", COREID);

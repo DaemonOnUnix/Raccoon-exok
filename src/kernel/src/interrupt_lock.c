@@ -8,11 +8,6 @@
 #define LOG_OK(...)
 #endif
 
-// #ifdef COREID
-// #undef COREID
-// #define COREID 0
-// #endif
-//
 static uint8_t lock_level[MAX_CORE] = {0};
 
 void unlock_ints(){

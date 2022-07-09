@@ -8,7 +8,7 @@
 //
 // volatile RW section
 //
-#define write_mem64(addr, value) ((*((uint64_t*)(addr))) = (value))
+#define write_mem64(addr, value) ((*((volatile uint64_t*)(addr))) = (value))
 #define read_mem64(addr) (*(volatile uint64_t*)(addr))
 
 //
