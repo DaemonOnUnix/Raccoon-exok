@@ -13,7 +13,7 @@ static void my_strncpy(volatile char *dest, volatile const char *src, size_t n)
     dest[i] = 0;
 }
 
-void register_new_file(char* name, uintptr_t begin, uintptr_t end)
+void register_new_file(const char* name, uintptr_t begin, uintptr_t end)
 {
     if (file_count >= MAX_FILES_IN_INITRD)
         PANIC("Too many files in initrd");
@@ -25,7 +25,7 @@ void register_new_file(char* name, uintptr_t begin, uintptr_t end)
     file_count++;
 }
 
-static char my_strcmp(char* a, char* b)
+static char my_strcmp(const char* a, const char* b)
 {
     while (*a && *b)
         if (*a++ != *b++)
@@ -38,7 +38,7 @@ struct file *get_files()
     return initrd_files;
 }
 
-struct file *get_file(char *name)
+struct file *get_file(const char *name)
 {
     for (size_t i = 0; i < file_count; i++)
     {

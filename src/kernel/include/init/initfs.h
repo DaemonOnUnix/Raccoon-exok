@@ -15,8 +15,8 @@ struct file
     uintptr_t cursor;
 };
 
-void register_new_file(char* name, uintptr_t begin, uintptr_t end);
+void register_new_file(const char* name, uintptr_t begin, uintptr_t end);
 struct file *get_files();
-struct file *get_file(char *name);
+struct file *get_file(const char *name);
 
 #endif

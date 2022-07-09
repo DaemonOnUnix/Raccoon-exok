@@ -1,3 +1,4 @@
+#include "cpu_regs_interface.h"
 #include "tables/gdt.h"
 #include "freestanding.h"
 #include "log/log.h"

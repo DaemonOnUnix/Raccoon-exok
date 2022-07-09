@@ -15,7 +15,9 @@ struct init {
     char *programs[MAX_CORE];
 };
 
-uint32_t atou(const char *str, const char **ptr)
+int strncmp(const char *a, const char *b, size_t n);
+
+uint32_t atou(char *str, char **ptr)
 {
     uint32_t to_return = 0;
     while ((*str >= '0') && (*str <= '9'))
@@ -43,13 +45,13 @@ struct init parse_init(const char *filename)
     if (!file)
         PANIC("No init file");
 
-    for(char *ptr = file->begin; ptr < file->end; ptr++)
+    for(char *ptr = (char*)(file->begin); (uintptr_t)ptr < (uintptr_t)(file->end); ptr++)
     {
         if (*ptr == '\n')
             *ptr = '\0';
     }
 
-    char *ptr = file->begin;
+    char *ptr = (char*)(file->begin);
     if (!strncmp(ptr, "CORES ", 6))
     {
         ptr += 6;

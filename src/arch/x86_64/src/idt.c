@@ -164,7 +164,7 @@ void setup_idt(void) {
 
     load_idt(&idt_descriptor);
 
-    PANIC_IF(struct_cpu_regs_interface_set("idtr", &idt_descriptor, 0) == 0, "Failed to set IDT descriptor in cache.");
+    PANIC_IF(struct_cpu_regs_interface_set("idtr", (uint64_t)&idt_descriptor, 0) == 0, "Failed to set IDT descriptor in cache.");
 
     LOG_OK("IDT loaded, IDT descriptor at {x}, IDT at {x} of size {d}", &idt_descriptor, idt_descriptor.offset, idt_descriptor.size);
 }

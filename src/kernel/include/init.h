@@ -8,5 +8,6 @@ struct init {
 
 #define INIT_FILE_NAME "init"
 struct init parse_init(const char *filename);
+void init_capabilities(struct capability* caps, size_t max, const char* current_system);
 
 #endif

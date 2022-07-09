@@ -6,7 +6,6 @@ MAX_CORE = 32
 MAX_CAPABILITIES = 64
 KERNEL_CONFIG = -DMAX_CORE=${MAX_CORE} -DARCH=${ARCH} -DARCH_FOLDER=${ARCH_FOLDER} -DMAX_CAPABILITIES=${MAX_CAPABILITIES}
 
-
 KERNEL_DIR = kernel
 
 CC = gcc
@@ -18,14 +17,8 @@ ASMPARAM = -f elf64 -F dwarf
 
 BUILD = build
 
-# ASSETS = ../assets/
-# LOGO = $(ASSETS)/pEpitOS-logo-1.bmp
+ISO_FILES = $(KERNEL).elf limine.cfg limine/limine.sys limine/limine-cd.bin limine/limine-eltorito-efi.bin init capabilities
 
-RAMDISK = kernel/userspace/build
-
-ISO_FILES = $(KERNEL).elf limine.cfg limine/limine.sys limine/limine-cd.bin limine/limine-eltorito-efi.bin $(RAMDISK) init capabilities $(ISO_FILES_TEST)
-
-CORE_NUM = 4
 
 LINK_SCRIPT = $(ARCH_FOLDER)/$(ARCH)/link.ld
 
@@ -67,7 +60,7 @@ QEMU_PARAMS_DEBUG = -S -gdb tcp::9000
 
 $(shell mkdir -p $(addprefix $(BUILD)/,$(SRCDIRS)))
 
-all: NODEBUG
+all: ../iso_root
 
 .PHONY: all clean NODEBUG DEBUG clean_deps ramdisk
 
@@ -77,17 +70,11 @@ NODEBUG: $(KERNEL).iso
 DEBUG: $(KERNEL).iso
 	@$(QEMU) $(QEMU_PARAMS_DEBUG) $(QEMU_PARAMS_NODEBUG) $<
 
-$(KERNEL).iso: ramdisk $(KERNEL).elf limine/Makefile
-	@rm -rf iso_root
-	@mkdir -p iso_root
-	@cp -v -r $(ISO_FILES) iso_root/
-	@cp -v -r iso_root/ ../iso_root
-	@echo 'please initialize your system in the iso_root at the root of the project.'
-	@echo 'then run make iso at the root'
-	@xorriso -as mkisofs -b limine-cd.bin \
-			-no-emul-boot -boot-load-size 4 -boot-info-table \
-			-eltorito-alt-boot -e limine-eltorito-efi.bin \
-			-no-emul-boot iso_root -o $(KERNEL).iso
+../iso_root: $(KERNEL).elf limine/Makefile
+	@mkdir -p $@
+	@cp -r $(ISO_FILES) $@
+	@echo 'Please initialize your system in the iso_root at the root of the project.'
+	@echo 'Then run make iso at the root'
 
 $(KERNEL).elf: $(OBJ)
 	@ld $(INTERNALLDFLAGS) $(OBJ) -o $@
@@ -102,12 +89,8 @@ $(BUILD)/%.o: %.c
 $(BUILD)/%.o: %.s
 	@nasm $(ASMPARAM) -o $@ $<
 
-ramdisk:
-	@make -C kernel/userspace
-
 clean:
 	@rm -rf $(KERNEL).elf $(OBJ) image.hdd $(KERNEL).iso $(BUILD) log.txt iso_root
-	@make -C kernel/userspace clean
 
 clean_deps: clean
 	@rm -rf limine

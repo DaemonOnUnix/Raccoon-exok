@@ -1,4 +1,5 @@
 #include "cap_mgr.h"
+#include "init.h"
 #include "interface_struct/interface_struct.h"
 
 static struct capability caps[MAX_CAPABILITIES];
@@ -42,7 +43,7 @@ char get_capability(const char *name, int16_t core_number)
 char release_capability(const char *name, int16_t core_number)
 {
     for (size_t i = 0; i < MAX_CAPABILITIES; i++) {
-        if(!strcmp(caps[i].name, name)) {
+        if(!second_strcmp(caps[i].name, name)) {
             if(caps[i].core_number == core_number) {
                 caps[i].core_number = -1;
                 return 1;
