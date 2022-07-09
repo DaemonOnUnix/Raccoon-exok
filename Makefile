@@ -23,3 +23,4 @@ clean:
 	@$(MAKE) clean -C src -s
 	@rm -rf iso_root
 	@rm -rf $(KERNEL).iso
+	@rm -f log.txt
