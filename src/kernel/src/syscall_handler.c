@@ -13,12 +13,12 @@ register_t syscall_handler(struct syscall_pack *pack)
         case 1:
             {
                 LOG_INFO("Acquiring capability: {s}\n", pack->arg1);
-                return get_capability(pack->arg1, COREID);
+                return get_capability((char *)pack->arg1, COREID);
             }
         case 2:
             {
                 LOG_INFO("Releasing capability: {s}\n", pack->arg1);
-                return release_capability(pack->arg1, COREID);
+                return release_capability((char *)pack->arg1, COREID);
             }
     }
     LOG_ERR("Unknown syscall: {x}\n", pack->syscall_id);

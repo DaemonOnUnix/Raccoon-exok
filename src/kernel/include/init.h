@@ -1,6 +1,8 @@
 #ifndef EXO_INIT_H
 #define EXO_INIT_H
 
+#include "cap_mgr.h"
+
 struct init {
     uint32_t required_cores;
     char *programs[MAX_CORE];
