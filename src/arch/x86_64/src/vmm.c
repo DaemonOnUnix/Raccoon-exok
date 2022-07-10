@@ -12,7 +12,7 @@ static uint64_t* limine_page_directory_addr = 0;
 
 void init_vmm(){
     LOG_INFO("Initialising Virtual Memory Manager...");
-    asm volatile("mov %0, cr3" : "=a"(limine_page_directory_addr) :);
+    asm volatile("mov %%cr3, %0" : "=a"(limine_page_directory_addr) :);
     limine_page_directory_addr = physical_to_stivale(limine_page_directory_addr);
     uint64_t* new_pdp = (uint64_t*)get_frame();
     uint64_t* new_pd = physical_to_stivale(new_pdp);
@@ -186,7 +186,7 @@ void setup_context_frame(){
 
     asm volatile(
         " \
-            push rax; mov rax, cr4; or rax, (1<<9); mov cr4, rax; pop rax \
+            push %rax; mov %cr4, %rax; or $0x200, %rax; mov %rax, %cr4; pop %rax \
         "
     );
 

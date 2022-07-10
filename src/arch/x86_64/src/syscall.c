@@ -36,16 +36,16 @@ void arch_syscall_handler(volatile struct syscall_frame frame)
 {
     struct syscall_pack pack;
 
-    asm volatile("mov %0, r15" : "=r"(pack.syscall_id));
-    asm volatile("mov %0, rdi" : "=r"(pack.arg1));
-    asm volatile("mov %0, rsi" : "=r"(pack.arg2));
-    asm volatile("mov %0, r8" : "=r"(pack.arg3));
-    asm volatile("mov %0, r9" : "=r"(pack.arg4));
-    asm volatile("mov %0, r10" : "=r"(pack.arg5));
+    asm volatile("mov %%r15, %0" : "=r"(pack.syscall_id));
+    asm volatile("mov %%rdi, %0" : "=r"(pack.arg1));
+    asm volatile("mov %%rsi, %0" : "=r"(pack.arg2));
+    asm volatile("mov %%r8, %0" : "=r"(pack.arg3));
+    asm volatile("mov %%r9, %0" : "=r"(pack.arg4));
+    asm volatile("mov %%r10, %0" : "=r"(pack.arg5));
 
     //LOG_INFO("syscall_handler called");
 
-    asm volatile("mov rax, %0" : : "r"(syscall_handler(&pack)));
+    asm volatile("mov %0, %%rax" : : "r"(syscall_handler(&pack)));
 
     UNUSED_VAR(frame);
 }

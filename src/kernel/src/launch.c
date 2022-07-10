@@ -195,9 +195,9 @@ void entry_launch(void)
     LOG_INFO("Mapping finished. Jumping to {x}", hdr->entry);
 
     kmmap(0x10000, 0x2000, 7);
-    asm volatile("movq rsp, %0" : : "r"(0x11000ll));
-    asm volatile ("mov rcx, %0" : : "r"(hdr->entry));
-    asm volatile ("mov r11, 0x002");
+    asm volatile("movq %0, %%rsp" : : "r"(0x11000ll));
+    asm volatile ("mov %0, %%rcx" : : "r"(hdr->entry));
+    asm volatile ("mov $0x002, %r11");
     asm volatile ("sysretq");
 
     ((void (*)())hdr->entry)();

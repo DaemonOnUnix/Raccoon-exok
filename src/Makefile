@@ -38,7 +38,6 @@ INTERNALCFLAGS  :=                  \
 	-fno-zero-initialized-in-bss \
 	-mcmodel=kernel		 \
 	-fno-delete-null-pointer-checks \
-	-masm=intel \
 	-m64
 
 SRCDIRS := $(shell find ./$(ARCH_FOLDER)/$(ARCH) -type d)
