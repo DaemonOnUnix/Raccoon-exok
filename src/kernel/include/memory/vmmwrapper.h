@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include "vmm/vmm.h"
 
 enum map_flags {
 

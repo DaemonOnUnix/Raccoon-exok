@@ -23,9 +23,6 @@ void kernel_main(void* generic_structure) {
     lock_ints();
     
     LOG_OK("All work finished.");
-    
-    struct file first = *get_files();
-    struct file second = *(get_files() + 3);
 
     parsed = parse_init(INIT_FILE_NAME);
     LOG_INFO("Parsed init: {x} cores", parsed.required_cores);

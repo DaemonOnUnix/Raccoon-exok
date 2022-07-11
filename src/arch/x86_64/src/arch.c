@@ -120,7 +120,8 @@ interface_struct *bootstrap_arch(void* structure){
 
     launch_APs(smp_infos, interface.launching_addresses);
 
-    while (get_booted_cpus_count() != smp_infos->cpu_count);
+    while (get_booted_cpus_count() != smp_infos->cpu_count) {}
+
     LOG_OK("All CPUs booted successfully ! ({d} cores)", get_booted_cpus_count());
 
     interface.core_number = smp_infos->cpu_count;

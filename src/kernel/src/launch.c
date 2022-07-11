@@ -120,7 +120,7 @@ char check_elf(Elf64Header *hdr)
     *((char*)hdr->ident.magics + 5) = 0;
     LOG_INFO("ELF magic: {s}", hdr->ident.magics);
 
-    for(char *i = hdr->ident.magics; i < hdr->ident.magics + 4; i++)
+    for(uint8_t *i = hdr->ident.magics; i < hdr->ident.magics + 4; i++)
         if(*i != ELF_HEADER_MAGIC[(uint8_t*)i - hdr->ident.magics])
             return 0;
 
