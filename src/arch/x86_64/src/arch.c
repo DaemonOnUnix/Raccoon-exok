@@ -32,12 +32,12 @@ void halt(){
 }
 
 void enable_mapping(mapping_t mapping){
-    asm volatile("mov cr3, %0" :: "a"(mapping));
+    asm volatile("mov %0, %%cr3" :: "a"(mapping));
 }
 
 mapping_t get_current_mapping(){
     uint64_t to_return;
-    asm volatile("mov %0, cr3" : "=a"(to_return) :);
+    asm volatile("mov %%cr3, %0" : "=a"(to_return) :);
     return (mapping_t)to_return;
 }
 
@@ -96,7 +96,7 @@ interface_struct *bootstrap_arch(void* structure){
     init_pmm((uintptr_t)physical_to_stivale(first_frame));
     init_vmm();
 
-    asm volatile("mov cr3, %0"::"a"(create_page_directory()));
+    asm volatile("mov %0, %%cr3"::"a"(create_page_directory()));
     LOG_OK("Page directory created and loaded successfully.");
 
     setup_context_frame();
@@ -113,9 +113,9 @@ interface_struct *bootstrap_arch(void* structure){
     syscall_initialize();
 
     uint64_t cr4;
-    asm volatile("mov %0, cr4" : "=a"(cr4) :);
+    asm volatile("mov %%cr4, %0" : "=a"(cr4) :);
     cr4 |= 0x800;
-    asm volatile("mov cr4, %0" :: "a"(cr4));
+    asm volatile("mov %0, %%cr4" :: "a"(cr4));
     LOG_OK("Set CR4.UMIP to 1.");
 
     launch_APs(smp_infos, interface.launching_addresses);

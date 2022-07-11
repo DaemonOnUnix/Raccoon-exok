@@ -56,7 +56,7 @@ void _start_core(struct stivale2_smp_info* smp_info){
     setup_idt();
     attach_kernel_exceptions();
 
-    asm volatile("mov cr3, %0"::"a"(create_page_directory()));
+    asm volatile("mov %0, %%cr3"::"a"(create_page_directory()));
     setup_context_frame();
     extern void enable_sse(void);
     enable_sse();
@@ -73,9 +73,9 @@ void _start_core(struct stivale2_smp_info* smp_info){
     smp_info = physical_to_stivale(smp_info);
     
     uint64_t cr4;
-    asm volatile("mov %0, cr4" : "=a"(cr4) :);
+    asm volatile("mov %%cr4, %0" : "=a"(cr4) :);
     cr4 |= 0x800;
-    asm volatile("mov cr4, %0" :: "a"(cr4));
+    asm volatile("mov %0, %%cr4" :: "a"(cr4));
     LOG_OK("Set CR4.UMIP to 1.");
 
     booted_cpus_count++;

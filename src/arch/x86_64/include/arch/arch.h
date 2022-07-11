@@ -81,7 +81,7 @@ void disable_ints();
  * @brief Macro to trigger a specified interrupt number.
  * @warning Number should be compile-time.
  */
-#define trigger_int(x) asm volatile("int " STRINGIFY(x))
+#define trigger_int(x) asm volatile("int $" STRINGIFY(x))
 
 /**
  * @brief Function ro register an interrupt handler

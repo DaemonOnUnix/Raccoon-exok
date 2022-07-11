@@ -27,7 +27,7 @@ void k_page_fault(volatile stackframe* regs){
         (regs->err_code & 0b0010 ? "Write access" : "Read Access"),
         (regs->err_code & 0b0100 ? "Fault in userspace" : "Fault in privileged segment"));
     uint64_t faulty_address;
-    asm volatile("mov %0, cr2" : "=a"(faulty_address) :);
+    asm volatile("mov %%cr2, %0" : "=a"(faulty_address) :);
     LOG_PANIC("Faulty address is {x}", faulty_address);
     panic_common_stub(regs);
 }
