@@ -7,10 +7,10 @@ typedef struct {
     atomic_char16_t lock;
 } lock;
 
-#define WAIT_LOCK(x) while(!__sync_bool_compare_and_swap(&(x.lock), 0, 1)); __sync_synchronize();
+#define WAIT_LOCK(x) wait_lock(&x);
 #define GRAB_LOCK_f(x)
 #define GRAB_LOCK(x) WAIT_LOCK(x); GRAB_LOCK_f(x)
-#define RELEASE_LOCK_f(x) __sync_synchronize(); ((x).lock--)
+#define RELEASE_LOCK_f(x) atomic_thread_fence(memory_order_seq_cst); ((x).lock--)
 #define RELEASE_LOCK(x) RELEASE_LOCK_f(x)
 
 #define BEGIN_BOTTLENECK(name) GRAB_LOCK(_lock_##name);
@@ -25,5 +25,13 @@ typedef struct {
 #define CREATE_GET_PROTO(name) void get_lock_##name ();
 #define CREATE_SET_PROTO(name) void set_lock_##name ();
 #define CREATE_PROTOS(name) CREATE_GET_PROTO(name) CREATE_SET_PROTO(name)
+
+static inline void wait_lock(lock *l)
+{
+    unsigned short expected = 0;
+
+    while (atomic_compare_exchange_strong(&l->lock, &expected, 1));
+    atomic_thread_fence(memory_order_seq_cst);
+}
 
 #endif
