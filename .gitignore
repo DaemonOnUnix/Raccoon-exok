@@ -1,0 +1,5 @@
+*.o
+iso_root/
+log.txt
+*.iso 
+*.elf
