@@ -1,0 +1,13 @@
+-std=gnu17           
+-ffreestanding       
+-m64
+-Wall 
+-Wextra 
+-Ofast 
+-DPTESTS 
+-Isrc/arch/x86_64/include/
+-Isrc/kernel/include/
+-DMAX_CORE=32 
+-DARCH=x86_64
+-DARCH_FOLDER=arch
+-DMAX_CAPABILITIES=64
