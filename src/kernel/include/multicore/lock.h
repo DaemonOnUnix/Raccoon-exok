@@ -2,12 +2,13 @@
 #define LOCK_H
 
 #include <stdatomic.h>
+#include <stdint.h>
 
 typedef struct {
     atomic_char16_t lock;
 } lock;
 
-#define WAIT_LOCK(x) while(!__sync_bool_compare_and_swap(&(x.lock), 0, 1)); __sync_synchronize();
+#define WAIT_LOCK(x) while(!__sync_bool_compare_and_swap((int16_t*)(&(x.lock)), 0, 1)); __sync_synchronize();
 #define GRAB_LOCK_f(x)
 #define GRAB_LOCK(x) WAIT_LOCK(x); GRAB_LOCK_f(x)
 #define RELEASE_LOCK_f(x) __sync_synchronize(); ((x).lock--)
