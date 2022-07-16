@@ -35,5 +35,7 @@ jobs:
     - name: Tests
       shell: bash
       run: |
-        timeout $TIMEOUT make test-nographics
-        [ $? -ne 124 ] && exit 1 || exit 0
+        for i in $(seq 1 4); do
+          timeout $TIMEOUT make CORE_NUM=$i test-nographics
+          [ $? -ne 124 ] && exit 1 || exit 0
+        done
