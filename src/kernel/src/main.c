@@ -1,9 +1,11 @@
 #include "arch/arch.h"
+#include "arch/archtypes.h"
 #include "interface_struct/interface_struct.h"
 #include "log/log.h"
 #include "vmm/vmm.h"
 
 #include "multicore/interrupt_lock.h"
+#include "multicore/pmap_recorder.h"
 
 #include "init/initfs.h"
 
@@ -41,6 +43,28 @@ void kernel_main(void* generic_structure) {
             }
             else
             {
+                for(size_t y = 1; y < i; y++)
+                {
+                    if(!strcmp(parsed.programs[y], parsed.programs[i]))
+                    {
+                        register_t pmap = load_pmap(y);
+                        // TODO: have arch-independent pause
+                        while(!load_entry(y))
+                            ;
+
+                        enable_mapping(pmap);
+
+                        // TODO: have a real stack
+                        kmmap(0x10000 + 0x3000 * COREID , 0x2000, 7);
+                        asm volatile("movq %0, %%rsp" : : "r"(0x10000ll + 0x3000 * COREID + 0x1980));
+                        asm volatile ("mov %0, %%rcx" : : "r"(load_entry(y)));
+                        asm volatile ("mov $0x002, %r11");
+                        asm volatile ("sysretq");
+
+                        while(1);
+
+                    }
+                }
                 LOG_INFO("Awakening core {d}..., jumping at {x}", i, entry_launch);
                 interface->launching_addresses[i] = entry_launch;
                 LOG_INFO("Written address {x}", interface->launching_addresses[i]);
@@ -52,7 +76,32 @@ void kernel_main(void* generic_structure) {
 
     LOG_OK("All cores awoken.");
     if(strcmp(parsed.programs[COREID], "HANG"))
+    {
+        for(size_t y = 1; y < parsed.required_cores; y++)
+        {
+            if(!strcmp(parsed.programs[y], parsed.programs[COREID]))
+            {
+                register_t pmap = load_pmap(y);
+                // TODO: have arch-independent pause
+                while(!load_entry(y))
+                    ;
+
+                LOG_INFO("pmap: {x}", pmap);
+                enable_mapping(pmap);
+
+                // TODO: have a real stack
+                kmmap(0x10000 + 0x3000 * COREID , 0x2000, 7);
+                asm volatile("movq %0, %%rsp" : : "r"(0x10000ll + 0x3000 * COREID + 0x1980));
+                asm volatile ("mov %0, %%rcx" : : "r"(load_entry(y)));
+                asm volatile ("mov $0x002, %r11");
+                asm volatile ("sysretq");
+
+                while(1);
+
+            }
+        }
         entry_launch();
+    }
 
     halt();
 }

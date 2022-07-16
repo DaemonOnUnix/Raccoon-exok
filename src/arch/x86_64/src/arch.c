@@ -18,6 +18,7 @@
 #include "interface_struct/interface_struct.h"
 #include "syscall-enabling/syscall.h"
 #include "init/initfs.h"
+#include "multicore/pmap_recorder.h"
 
 void enable_ints(){
     asm volatile("sti");
@@ -96,7 +97,9 @@ interface_struct *bootstrap_arch(void* structure){
     init_pmm((uintptr_t)physical_to_stivale(first_frame));
     init_vmm();
 
-    asm volatile("mov %0, %%cr3"::"a"(create_page_directory()));
+    uint64_t pmap = create_page_directory();
+    store_pmap(pmap, 0);
+    asm volatile("mov %0, %%cr3"::"a"(pmap));
     LOG_OK("Page directory created and loaded successfully.");
 
     setup_context_frame();

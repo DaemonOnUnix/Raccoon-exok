@@ -4,6 +4,7 @@
 #include "utils/functions.h"
 #include "init/initfs.h"
 #include "init.h"
+#include "multicore/pmap_recorder.h"
 
 #define ELF_HEADER_MAGIC "\177ELF"
 #define PACKED __attribute__((packed))
@@ -178,12 +179,14 @@ void entry_launch(void)
     map_elf_64(hdr);
     LOG_INFO("Mapping finished. Jumping to {x}", hdr->entry);
 
-    kmmap(0x10000, 0x2000, 7);
-    asm volatile("movq %0, %%rsp" : : "r"(0x11000ll));
+    store_entry(hdr->entry, COREID);
+
+    kmmap(0x10000 + 0x3000 * COREID , 0x2000, 7);
+    asm volatile("movq %0, %%rsp" : : "r"(0x10000ll + 0x3000 * COREID + 0x1980));
     asm volatile ("mov %0, %%rcx" : : "r"(hdr->entry));
     asm volatile ("mov $0x002, %r11");
     asm volatile ("sysretq");
 
-    ((void (*)())hdr->entry)();
+    // ((void (*)())hdr->entry)();
     while(1);
 }

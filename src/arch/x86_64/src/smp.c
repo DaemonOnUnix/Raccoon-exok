@@ -16,6 +16,7 @@
 #include "multicore/lock.h"
 #include "UEFI/APIC.h"
 #include "syscall-enabling/syscall.h"
+#include "multicore/pmap_recorder.h"
 
 static bool smp_status = 0;
 static uint8_t booted_cpus_count = 1;
@@ -56,7 +57,9 @@ void _start_core(struct stivale2_smp_info* smp_info){
     setup_idt();
     attach_kernel_exceptions();
 
-    asm volatile("mov %0, %%cr3"::"a"(create_page_directory()));
+    uint64_t pmap = create_page_directory();
+    store_pmap(pmap, smp_info->lapic_id);
+    asm volatile("mov %0, %%cr3"::"a"(pmap));
     setup_context_frame();
     extern void enable_sse(void);
     enable_sse();
