@@ -61,5 +61,6 @@ jobs:
     - name: Tests
       shell: bash
       run: |
+        set +e
         timeout $TIMEOUT make test-nographics
         [ $? -ne 124 ] && exit 1 || exit 0
