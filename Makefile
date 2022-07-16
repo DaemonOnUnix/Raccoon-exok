@@ -5,7 +5,9 @@ KERNEL=Raccoon-exokernel
 
 QEMU = qemu-system-x86_64
 CORE_NUM = 4
+
 QEMU_BASE_PARAMS_NODEBUG = -no-reboot -D ./log.txt -d int,guest_errors,in_asm -m 512M -boot d -M q35  -serial mon:stdio -m 1G -smp $(CORE_NUM) -cdrom
+
 QEMU_PARAMS_NOGRAPHICS = -nographic $(QEMU_BASE_PARAMS_NODEBUG)
 QEMU_PARAMS_GRAPHICS = -vga std $(QEMU_BASE_PARAMS_NODEBUG)
 

@@ -119,7 +119,6 @@ typedef struct PACKED
 char check_elf(Elf64Header *hdr)
 {
     *((char*)hdr->ident.magics + 5) = 0;
-    LOG_INFO("ELF magic: {s}", hdr->ident.magics);
 
     for(uint8_t *i = hdr->ident.magics; i < hdr->ident.magics + 4; i++)
         if(*i != ELF_HEADER_MAGIC[(uint8_t*)i - hdr->ident.magics])
@@ -161,10 +160,8 @@ void map_elf_64(Elf64Header *hdr)
     if(!check_elf(hdr))
         return;
 
-    LOG_INFO("programs_count: {d}", hdr->programs_count);
     for(uint16_t i = 0; i < hdr->programs_count; i++)
     {
-        LOG_INFO("Mapping section {d}", i);
         Elf64ProgramHeader *phdr = (Elf64ProgramHeader *)((uintptr_t)(hdr->programs_offset + i * hdr->programs_size) + (uintptr_t)hdr);
         map_section(phdr, (uintptr_t)hdr);
     }

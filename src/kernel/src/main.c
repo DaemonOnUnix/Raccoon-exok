@@ -86,11 +86,10 @@ void kernel_main(void* generic_structure) {
                 while(!load_entry(y))
                     ;
 
-                LOG_INFO("pmap: {x}", pmap);
                 enable_mapping(pmap);
 
                 // TODO: have a real stack
-                kmmap(0x10000 + 0x3000 * COREID , 0x2000, 7);
+                kmmap(0x10000 + 0x3000 * COREID, 0x2000, 7);
                 asm volatile("movq %0, %%rsp" : : "r"(0x10000ll + 0x3000 * COREID + 0x1980));
                 asm volatile ("mov %0, %%rcx" : : "r"(load_entry(y)));
                 asm volatile ("mov $0x002, %r11");

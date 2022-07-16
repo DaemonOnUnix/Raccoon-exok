@@ -94,7 +94,7 @@ void _start_core(struct stivale2_smp_info* smp_info){
         launching_addresses[COREID] = NULL;
         while(!launching_addresses[COREID] || launching_addresses[COREID] == (void*)1)
             asm volatile("pause");
-        LOG_INFO("Launching address: {d}", launching_addresses[COREID]);
+        LOG_INFO("Launching address: {x}", launching_addresses[COREID]);
         launching_addresses[COREID]();
     }
 
