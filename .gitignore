@@ -1,5 +1,6 @@
 *.o
 iso_root/
+src/limine/
 log.txt
 *.iso 
 *.elf

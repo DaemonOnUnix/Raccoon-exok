@@ -1,0 +1,39 @@
+name: "Raccon-exok"
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  TIMEOUT: 10s
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install dependencies
+      shell: bash
+      run: |
+        apt install -yq nasm xorriso qemu-system-x86
+
+    - name: Make
+      shell: bash
+      run: make
+
+    - name: Make iso
+      shell: bash
+      run: |
+        sed -i 's/GRAPHICS=yes/GRAPHICS=no/' iso_root/limine.cfg
+        make iso
+
+    - name: Tests
+      shell: bash
+      run: |
+        timeout $TIMEOUT make test-nographics
+        [ $? -ne 124 ] && exit 1 || exit 0
