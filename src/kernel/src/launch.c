@@ -124,17 +124,11 @@ char check_elf(Elf64Header *hdr)
         if(*i != ELF_HEADER_MAGIC[(uint8_t*)i - hdr->ident.magics])
             return 0;
 
-    LOG_INFO("Check 1");
-
     if(hdr->ident.elf_class != ELF_CLASS_64)
         return 0;
 
-    LOG_INFO("Check 2");
-
     if(hdr->object_type != ELF_TYPE_EXECUTABLE)
         return 0;
-
-    LOG_INFO("Check 4");
 
     return 1;
 }
@@ -173,16 +167,6 @@ void map_elf_64(Elf64Header *hdr)
         Elf64ProgramHeader *phdr = (Elf64ProgramHeader *)((uintptr_t)(hdr->programs_offset + i * hdr->programs_size) + (uintptr_t)hdr);
         map_section(phdr, (uintptr_t)hdr);
     }
-
-    // for(uint16_t i = 0; i < hdr->sections_count; i++)
-    // {
-    //     Elf64SectionHeader *shdr = (Elf64SectionHeader *)(hdr->sections_offset + i * hdr->sections_size);
-    //     if(shdr->type == ELF_PROGRAM_HEADER_LOAD)
-    //     {
-    //         LOG_INFO("Mapping section {d}", i);
-    //         map_section(shdr, (uintptr_t)hdr);
-    //     }
-    // }
 }
 
 void entry_launch(void)
