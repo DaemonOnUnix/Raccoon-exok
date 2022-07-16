@@ -1,0 +1,66 @@
+name: "Raccon-exok"
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  TIMEOUT: 10s
+
+jobs:
+  build:
+    runs-on: ${{ matrix.config.os }}
+    name: ${{ matrix.config.name }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - { os: ubuntu-latest, name: "Ubuntu GCC 11", cc: "gcc-11", cxx: "g++-11" }
+          - { os: ubuntu-latest, name: "Ubuntu GCC 10", cc: "gcc-10", cxx: "g++-10" }
+          - { os: ubuntu-latest, name: "Ubuntu GCC 9", cc: "gcc-9", cxx: "g++-9" }
+          - { os: ubuntu-latest, name: "Ubuntu GCC 8", cc: "gcc-8", cxx: "g++-8" }
+          - { os: ubuntu-latest, name: "Ubuntu Clang 11", cc: "clang-11", cxx: "clang++-11" }
+          - { os: ubuntu-latest, name: "Ubuntu Clang 10", cc: "clang-10", cxx: "clang++-10" }
+          - { os: ubuntu-latest, name: "Ubuntu Clang 9", cc: "clang-9", cxx: "clang++-9" }
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Update GNU compilers
+      if: startsWith(matrix.config.cc, 'gcc')
+      shell: bash
+      run: |
+        sudo apt-add-repository -y ppa:ubuntu-toolchain-r/test
+        sudo apt-get -yq install ${{ matrix.config.cc }} ${{ matrix.config.cxx }}
+
+    - name: Update LLVM compilers
+      if: startsWith(matrix.config.cc, 'clang')
+      shell: bash
+      run: |
+        version=`echo ${{ matrix.config.cc }} | cut -c 7-`
+        sudo apt-get install -y clang-${version} lld-${version} libc++-${version}-dev libc++abi-${version}-dev clang-tools-${version}
+
+    - name: Install dependencies
+      shell: bash
+      run: |
+        sudo apt install -yq nasm xorriso qemu-system-x86
+
+    - name: Make
+      shell: bash
+      run: make CC=${{ matrix.config.cc }}
+
+    - name: Make iso
+      shell: bash
+      run: |
+        sed -i 's/GRAPHICS=yes/GRAPHICS=no/' iso_root/limine.cfg
+        make iso
+
+    - name: Tests
+      shell: bash
+      run: |
+        set +e
+        timeout $TIMEOUT make test-nographics
+        [ $? -ne 124 ] && exit 1 || exit 0
