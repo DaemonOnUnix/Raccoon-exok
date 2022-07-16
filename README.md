@@ -6,6 +6,8 @@ Related conference link coming soon (in french)
 
 ## Current status
 
+Build status and execution on various gcc and clang:
+
 [![Raccon-exok](https://github.com/DaemonOnUnix/Raccoon-exok/actions/workflows/ci.yml/badge.svg)](https://github.com/DaemonOnUnix/Raccoon-exok/actions/workflows/ci.yml)
 
 ## Basic build / test kernel init
