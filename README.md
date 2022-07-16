@@ -4,6 +4,10 @@ Related to a EPITA System and Security Laboratory conference. This is a research
 Contact: `daniel.frederic@lse.epita.fr` or `daniel.frederic@epita.fr`
 Related conference link coming soon (in french)
 
+## Current status
+
+[![Raccon-exok](https://github.com/DaemonOnUnix/Raccoon-exok/actions/workflows/ci.yml/badge.svg)](https://github.com/DaemonOnUnix/Raccoon-exok/actions/workflows/ci.yml)
+
 ## Basic build / test kernel init
 
 ```
