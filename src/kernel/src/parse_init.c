@@ -60,7 +60,7 @@ struct init parse_init(const char *filename)
         PANIC("No CORES section");
 
     ptr = get_next_line(file, ptr);
-    while ((uintptr_t)ptr < file->end)
+    while ((uintptr_t)ptr < file->end && ptr)
     {
         if(*ptr == '\0')
             ptr = get_next_line(file, ptr);

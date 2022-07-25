@@ -14,6 +14,10 @@ QEMU_PARAMS_GRAPHICS = -vga std $(QEMU_BASE_PARAMS_NODEBUG)
 all:
 	@$(MAKE) $(TARGET) -C src -s
 
+regen_kernel:
+	@$(MAKE) -C src -s Raccoon.elf
+	@cp src/Raccoon.elf iso_root/Raccoon.elf
+
 iso:
 	@xorriso -as mkisofs -b limine-cd.bin \
 		-no-emul-boot -boot-load-size 4 -boot-info-table \

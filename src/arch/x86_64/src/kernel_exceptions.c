@@ -55,11 +55,7 @@ void k_invalid_opcode(volatile stackframe* regs){
 }
 
 void timer(volatile stackframe* regs){
-    
     UNUSED_VAR(regs);
-    
-    save_simd_context(CONTEXT_FRAME_ADDR);
-    LOG_INFO("timer plouf");
 }
 
 void switch_task_from_interrupt(volatile stackframe* regs);
