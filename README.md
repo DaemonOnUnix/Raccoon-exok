@@ -21,3 +21,9 @@ make iso
 # To test in qemu for x86_64
 make test
 ```
+
+Mostly for developers, to apply a kernel patch without changing files in ramdisk (change only kernel elf)
+
+```
+make regen_kernel
+```
