@@ -5,6 +5,7 @@
 #include "init/initfs.h"
 #include "init.h"
 #include "multicore/pmap_recorder.h"
+#include <protocol_init.h>
 
 #define ELF_HEADER_MAGIC "\177ELF"
 #define PACKED __attribute__((packed))
@@ -133,7 +134,6 @@ char check_elf(Elf64Header *hdr)
     return 1;
 }
 
-
 void map_section(Elf64ProgramHeader *phdr, uintptr_t file_pos)
 {
     if(phdr->type != ELF_PROGRAM_HEADER_LOAD)
@@ -152,7 +152,6 @@ void map_shdr(Elf64SectionHeader *shdr, uintptr_t file_pos)
     kmmap(shdr->virtual_address, shdr->file_size, 7);
     memcpy((void *)shdr->virtual_address, (void *)(shdr->file_offset + file_pos), shdr->file_size);
 }
-
 
 void map_elf_64(Elf64Header *hdr)
 {
@@ -174,10 +173,11 @@ void entry_launch(void)
     struct file *f = get_file(parsed.programs[COREID]);
     Elf64Header *hdr = (Elf64Header *)(f->begin);
     map_elf_64(hdr);
+    init_protocol();
+    store_entry(hdr->entry, COREID);
     LOG_INFO("Mapping finished. Jumping to {x}", hdr->entry);
 
-    store_entry(hdr->entry, COREID);
-
+    // TODO: have a real stack
     kmmap(0x10000 + 0x3000 * COREID , 0x2000, 7);
     asm volatile("movq %0, %%rsp" : : "r"(0x10000ll + 0x3000 * COREID + 0x1980));
     asm volatile ("mov %0, %%rcx" : : "r"(hdr->entry));

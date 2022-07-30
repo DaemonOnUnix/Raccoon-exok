@@ -15,6 +15,7 @@ all:
 	@$(MAKE) $(TARGET) -C src -s
 
 regen_kernel:
+	@$(MAKE) clean -C src -s
 	@$(MAKE) -C src -s Raccoon.elf
 	@cp src/Raccoon.elf iso_root/Raccoon.elf
 

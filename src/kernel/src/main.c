@@ -15,6 +15,7 @@
 #include "init.h"
 #include "launch.h"
 #include <stddef.h>
+#include <protocol_init.h>
 
 struct init parsed;
 
@@ -53,6 +54,7 @@ void kernel_main(void* generic_structure) {
                             ;
 
                         enable_mapping(pmap);
+                        init_protocol();
 
                         // TODO: have a real stack
                         kmmap(0x10000 + 0x3000 * COREID , 0x2000, 7);
@@ -85,6 +87,7 @@ void kernel_main(void* generic_structure) {
                 // TODO: have arch-independent pause
                 while(!load_entry(y))
                     ;
+                LOG_INFO("Program {s} is already running, jumping at {x} with stack at {x} of size {x}.", parsed.programs[y], entry_launch, 0x10000 + 0x3000 * COREID, 0x1980);
 
                 enable_mapping(pmap);
 

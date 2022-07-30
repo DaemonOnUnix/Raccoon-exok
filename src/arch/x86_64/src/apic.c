@@ -23,7 +23,7 @@ void map_pics(){
         LOG_PANIC("Can't map PICs with unitialized data.");
         HALT();
     }
-    // Should desactivate caching for this memory region
+    // TODO: Should desactivate caching for this memory region
     kmmap_physical(IOAPIC_VIRTUAL_ADDRESS, apic_info.ioapic.address, IOAPIC_LENGTH*2, 2);
     kmmap_physical(LAPIC_VIRTUAL_ADDRESS, apic_info.lapic_address, LAPIC_LENGTH*2, 2);    
 }

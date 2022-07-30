@@ -2,7 +2,7 @@
 #include "init.h"
 #include "interface_struct/interface_struct.h"
 
-static struct capability caps[MAX_CAPABILITIES];
+struct capability caps[MAX_CAPABILITIES];
 
 // TODO: clean
 static int32_t second_strcmp(volatile const char *a, volatile const char *b) {
