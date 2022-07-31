@@ -13,13 +13,11 @@ CREATE_LOCK(space_alloc);
 uintptr_t space_alloc(size_t size, uintptr_t flags)
 {
     BEGIN_BOTTLENECK(space_alloc);
-    LOG_OK("------------------------ Allocation beginning -----------------------");
     uint64_t address = search_available(craft_addr(0,0,0,1,0), size);
     LOG_INFO("Allocating {x} bytes at {x}", size, address);
     if(address == 0)
         return 0;
     kmmap(address, size, convert_to_arch_flags(flags));
-    LOG_OK("------------------------ Allocation ending ------------------------");
     END_BOTTLENECK(space_alloc);
     return address;
 }
