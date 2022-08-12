@@ -46,7 +46,7 @@ jobs:
     - name: Install dependencies
       shell: bash
       run: |
-        sudo apt install -yq nasm xorriso qemu-system-x86
+        sudo apt update && sudo apt install -yq nasm xorriso qemu-system-x86
 
     - name: Make
       shell: bash
